@@ -1,0 +1,254 @@
+@charset "utf-8";
+/*---------------------Header---------------------------*/
+#header {
+	height: 110px;
+	width: 1200px;
+	margin-left: 70px;
+	padding-top:10px;
+	background-color:#990000;
+	bottom: 150px; 
+}
+#logo{
+	float:left;
+	margin-bottom:15px;
+	margin-left:50px;
+}
+#divtitle{
+	height: 100px;
+	margin-left:100px;
+	margin-right:50px;
+	background-color:#FFCC00;
+}
+#title{
+	font-family: Arial;
+	font-size: 30px;
+	margin-left:50px;
+}
+#subtitle{
+	font-family: Arial;
+	font-size: 20px;
+	left:150px;	
+	margin-top:-10px;
+	margin-left:50px;	
+}
+#subtitle2{
+	font-family: Arial;
+	font-size: 15px;
+	left:150px;	
+	margin-top:-10px; 
+	margin-left:50px;
+}
+/*--------------------username-------------------------*/
+#username{
+	float:right;
+	margin-right: 5px;
+	font-family: "Times New Roman", Times, serif;
+	font-size: 15px;
+	font-style:italic;
+}
+/*---------------------Body---------------------------*/
+#body{
+	height: 560px;
+	width: 1200px;
+	margin-left: 70px;
+	background-color:#F0FFFF; 
+}
+/*---------------------Footer-------------------------*/
+#footer{
+	width: 1200px;
+	margin-left: 70px;
+	margin-bottom:auto;
+	background-color:#8A0000; 
+	height : 1px;
+	padding-top:10px;
+}
+#logofooter{
+	float:right;
+	margin-top:2px;
+	margin-bottom:15px;
+	margin-right:50px;
+}
+#titlefooter{
+	float:right;
+	margin-right :20px;
+	font-family: "Times New Roman", Times, serif;
+	font-size: 15px;
+}
+/*----------------button tampilan home login----------*/
+#login{
+	float:left;
+	margin-left:250px;
+	margin-top:50px;
+	border:black;
+}
+#login-gambar{
+	float:left;
+	margin-left:50px;
+	margin-top:50px;
+}
+/*----------------button tampilan home----------*/
+#button{
+	float:left;
+	left:100px;
+	margin-top:60px;
+	margin-bottom:40px;
+}
+#button1{
+	float:left;
+	margin-left:10px;
+	margin-top:60px;
+	margin-bottom:40px;
+}
+#button2{
+	float: left;
+	margin-left:200px;
+	margin-top:60px;
+	margin-bottom:40px;
+}
+#button3{
+	float: left;
+	margin-left:300px;
+	margin-top:60px;
+	margin-bottom:40px;
+}
+/** Navigation **/
+#navigation {
+	background-color:#CCCCCC;
+	clear: both;
+	height: 50px;
+	width: 515px;
+	margin: 0 auto;
+	padding: 2px;
+}
+#navigation ul {
+	display: inline-block;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+#navigation li {
+	float: left;
+	background-position: 0 -118px;
+	background-repeat: no-repeat;
+	height: 60px;
+	width: 171px;
+	margin: 0;
+	padding-left: 1px;
+	text-align: center;
+}
+#navigation li:first-child {
+	background: none;
+	margin-left: 0;
+	padding-left: 0;
+}
+#navigation li a {
+	color: black;
+	display: block;
+	font: bold 14px/48px Arial, Helvetica, sans-serif;
+	height: 49px;
+	margin-left:5px;
+	text-decoration: none;
+	text-transform: uppercase;
+}
+#navigation li a:hover {
+	background:#CC9999;
+	color: white;
+}
+#navigation li.selected a {
+	background-color:#993333;
+	color: white;
+}
+/** Navigation1 **/
+#navigation1 {
+	background-color:#CCCCCC;
+	clear: both;
+	height: 50px;
+	width: 1005px;
+	margin: 0 auto;
+	padding: 2px;
+}
+#navigation1 ul {
+	display: inline-block;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+#navigation1 li {
+	float: left;
+	background-position: 0 -118px;
+	background-repeat: no-repeat;
+	height: 60px;
+	width: 200px;
+	margin: 0;
+	padding-left: 1px;
+	text-align: center;
+}
+#navigation1 li:first-child {
+	background: none;
+	margin-left: 0;
+	padding-left: 0;
+}
+#navigation1 li a {
+	color: black;
+	display: block;
+	font: bold 14px/48px Arial, Helvetica, sans-serif;
+	height: 49px;
+	margin-left:5px;
+	text-decoration: none;
+	text-transform: uppercase;
+}
+#navigation1 li a:hover {
+	background:#CC9999;
+	color: white;
+}
+#navigation1 li.selected a {
+	background-color:#993333;
+	color: white;
+}
+/** Navigation2 **/
+#navigation2 {
+	background-color:#CCCCCC;
+	clear: both;
+	height: 50px;
+	width: 450px;
+	margin: 0 auto;
+	padding: 2px;
+}
+#navigation2 ul {
+	display: inline-block;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+#navigation2 li {
+	float: left;
+	background-position: 0 -118px;
+	background-repeat: no-repeat;
+	height: 60px;
+	width: 220px;
+	margin: 0;
+	padding-left: 1px;
+	text-align: center;
+}
+#navigation2 li:first-child {
+	background: none;
+	margin-left: 0;
+	padding-left: 0;
+}
+#navigation2 li a {
+	color: black;
+	display: block;
+	font: bold 14px/48px Arial, Helvetica, sans-serif;
+	height: 49px;
+	margin-left:5px;
+	text-decoration: none;
+	text-transform: uppercase;
+}
+#navigation2 li a:hover {
+	background:#CC9999;
+	color: white;
+}
+#navigation2 li.selected a {
+	background-color:#993333;
+	color: white;
+}

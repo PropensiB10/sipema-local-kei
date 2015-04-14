@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+{% load static %}
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Portal Aplikasi-Sipema</title>
+<style type="text/css">
+</style>
+<link href="{% static  'style.css' %}" rel="stylesheet" type="text/css" />
+<style type="text/css">
+</style>
+</head>
+
+<body>
+<!------Header--------->
+<div id="header">
+    <div id="logo"><img src="{% static 'logouibarubaru.png' %}" alt="LOGO" width="93" height="100"> </div>
+	<div id="divtitle">
+		<div id="title"> SiPeMa </div>
+        <div id="subtitle"> <p>Sistem Informasi Pemesanan Makanan</p></div>
+		<div id="subtitle2"> <p>Fakultas Ilmu Komputer Universitas Indonesia</p> </div>
+    </div>
+	<div id="username">
+		<p>Login as ... <a href="logout.html">(Logout)</a></p>
+	</div>
+</div> 
+<!------Body--------->
+	
+  	<div id="body">
+		<div id="navigation1">
+					<ul>
+						<li >
+							<a href="dp_harian.html">Daftar Pesanan Harian</a>
+						</li>
+						<li >
+							<a href="b_pengeluaran.html">biaya pengeluaran</a>
+						</li>
+						<li class="selected">
+							<a href="m_makanan.html">menu makanan</a>
+						</li>
+						<li>
+							<a href="j_dosen.html">jadwal dosen</a>
+						</li>
+						<li>
+							<a href="sp_makanan.html">pesan makanan</a>
+						</li>
+					</ul>
+				</div>
+<center>
+<br>
+<table>
+<form action='/add/food/' method=''> {% csrf_token %}
+	<tr><td><input type=submit value="Tambah Menu Makanan"></td></tr>
+</form>
+</table>
+
+{% if food_list %}
+<table border=1>
+<tr><td><b>No</b></td><td><b>Nama Makanan<td></b><td></td></tr>
+{% for f in food_list %}
+	<tr>
+		<td>{{f.id}}</td><td>{{f.nama}}</td>
+		<td><form action='' method='POST'>{% csrf_token %}<button type="submit" name="edit" value='{{f.id}}'>Edit</button></form></td>
+		<td><form method='POST' action='/view/food/delete/'>{% csrf_token %}<button type="submit" name="delete" value='{{f.id}}'>Delete</button></form></td>
+	</tr>
+{% endfor %}
+</table>
+{% endif %}
+	</center>
+	</div>
+<!------Footer--------->
+	
+	<div id="footer">   
+    	<div id="logofooter"><img src="{% static 'logoFasilkom.png' %}" alt="" name="logoFasilkom" width="48" height="47" id="logoFasilkom" /></div>
+        <div id="titlefooter"> <p>Exellence in TeamWork </p></div>
+    </div>
+    
+ 
+</body>
+</html>
