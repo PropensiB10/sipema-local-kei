@@ -1,153 +1,264 @@
-from django.shortcuts import render, render_to_response, RequestContext
-
+from django.shortcuts import render, render_to_response, RequestContext, get_object_or_404
 # Create your views here.
+from django.views.generic.edit import UpdateView
 from django.http import HttpResponse, HttpResponseRedirect
 from polls.models import *
 from django.template import Context, loader
 from .forms import *
+from django.core.exceptions import ObjectDoesNotExist
 #from django.template.context_processors import csrf
 
-def index(request):
-	#food_list = Food.objects.all()
-	#return HttpResponse("Hello SiPeMa User")
-	t = loader.get_template('user-interfaces/home-login.html')
-	c = Context('')
-	return HttpResponse(t.render(c))
-	
-def login(request):
-	username = 'username'
-	password = 'password'
-	if request.method == 'POST':
-		username2 = request.POST.get('username')
-		password2 = request.POST.get('password')
-		if usename == username2:
-			t = loader.get_template('user-interfaces/m_makanan.html')
-			c = Context('')
-			return HttpResponse()
-
 def viewfood(request):
-	food_list = Food.objects.all()
-	t = loader.get_template('user-interfaces/m_makanan.html')
-	c = Context({'food_list': food_list,})
-	return HttpResponse(t.render(c))
-	#return render(request,"user-interfaces/m_makanan.html",food_list)
-	#return render(request, "daftarmakanan.html",c)
-	
-# def addfood(request):
-# 	form = FoodForm(request.POST or None)
-# 	if form.is_valid():
-# 		save_it =  form.save(commit=False)
-# 		#konfirmasi dulu mau ditambahin atau engga sebelum disave
-# 		save_it.save()
-# 	return render_to_response("user-interfaces/daftarmakanan.html", locals(), context_instance=RequestContext(request))
-#	return HttpResponseRedirect("user-interfaces/m_makanan.html")
+    food_list = Food.objects.all().order_by('restoran')
+    restoran = Restaurant.objects.all()
+    context = {'food_list':food_list,'restoran':restoran}
+    template = "user-interfaces/m_makanan.html"
+    return render(request, template, context)
 
+def filter_food(request):
+	if request.method == 'POST' :
+		food_list = Food.objects.none()
+		resto_id = request.POST.get('restoran')
+		print resto_id
+		if resto_id == 'all':
+			print "masuk all"
+			food_list = Food.objects.all().order_by('restoran')
+		else:
+			resto = Restaurant.objects.get(id=resto_id)
+			print "masuk else"
+			print resto
+			food_list = Food.objects.filter(restoran=resto)
+		restoran =Restaurant.objects.all()
+		context = {'food_list':food_list, 'restoran':restoran}
+		template = "user-interfaces/m_makanan.html"
+		return render(request, template, context)
+
+def filter_food_manage(request):
+	if request.method == 'POST' :
+		food_list = Food.objects.none()
+		resto_id = request.POST.get('restoran')
+		print resto_id
+		if resto_id == 'all':
+			print "masuk all"
+			food_list = Food.objects.all().order_by('restoran')
+		else:
+			resto = Restaurant.objects.get(id=resto_id)
+			print "masuk else"
+			print resto
+			food_list = Food.objects.filter(restoran=resto)
+		restoran =Restaurant.objects.all()
+		context = {'food_list':food_list, 'restoran':restoran}
+		template = "user-interfaces/m_makanan_m.html"
+		return render(request, template, context)
+
+def managefood(request):
+    food_list = Food.objects.all().order_by('restoran')
+    restoran = Restaurant.objects.all()
+    context = {'food_list':food_list, 'restoran':restoran}
+    template = "user-interfaces/m_makanan_m.html"
+    return render(request, template, context)
+
+def managerestoran(request):
+    restoran = Restaurant.objects.all()
+    context = {'restoran':restoran}
+    template = "user-interfaces/m_restoran.html"
+    return render(request, template, context)
+
+def addrestoran(request):
+	form = RestoranForm(request.POST or None)
+	if 'simpan' in request.POST:
+		if form.is_valid():
+			save_it =  form.save(commit=False)
+			nama = form.cleaned_data['nama_restoran']
+			save_it.save()
+			return HttpResponseRedirect('/add/food/')
+	elif 'batal' in request.POST:
+		return HttpResponseRedirect('/view/food/') #jika batal kembali ke halaman view
+	context = {"form":form,}
+	template = "user-interfaces/tambahrestoran.html"
+	return render(request, template, context)
+
+def deleteRestoran(request):
+	if request.method == 'POST' :
+		restoran_list = Restaurant.objects.filter(id=request.POST.get("delete"))
+		restoran_list.delete()
+	return HttpResponseRedirect('/manage/restoran/')
+
+def updateRestoran(request):
+	restoran = Restaurant.objects.filter(id=request.POST.get("edit"))
+	context = {"restoran":restoran}
+	template = "user-interfaces/update-restoran.html"
+	return render(request, template, context)
+
+def updateRestoranSave(request):
+	if request.method == "POST":
+		restoran = Restaurant.objects.all()
+		resto = Restaurant.objects.filter(nama_restoran=request.POST.get("nama_restoran"))
+		if len(resto)>0:
+			notifikasi = "Restoran sudah tersedia"
+			context = {"notifikasi":notifikasi, "restoran":restoran}
+			template = "user-interfaces/m_restoran.html"				
+			return render(request, template, context)
+		elif len(resto)==0:
+			notifikasi = "Perubahan telah disimpan"
+			restoran_list = Restaurant.objects.filter(id=request.POST.get("simpan"))
+			restoran_list.update(nama_restoran=request.POST.get("nama_restoran"))
+			context = {"notifikasi":notifikasi, "restoran":restoran}
+			template = "user-interfaces/m_restoran.html"				
+			return render(request, template, context)
+
+#menambahkan nama makanan ke dalam database
 def addfood(request):
 	food_list = Food.objects.all()
 	form = FoodForm(request.POST or None)
 	if 'simpan' in request.POST:
 		if form.is_valid():
 			save_it =  form.save(commit=False)
-			#harusnya ada konfirmasi dulu mau ditambahin atau engga sebelum disave
-			nama = form.cleaned_data['nama']
-			#new_join, created = Food.objects.filter(nama=nama)
+			notifikasi = "Makanan baru berhasil disimpan"
 			save_it.save()
-			return HttpResponseRedirect('/view/food/')
-	#		return list(request, message="Makanan berhasil ditambahkan")
+			context = {"food_list":food_list, 'notifikasi':notifikasi}
+			template = "user-interfaces/m_makanan.html"
+			return render(request, template, context)
 	elif 'batal' in request.POST:
-		return HttpResponseRedirect('/view/food/')
+		return HttpResponseRedirect('/view/food/') #jika batal kembali ke halaman view
 	context = {"form":form, 'food_list':food_list}
 	template = "user-interfaces/daftarmakanan.html"
 	return render(request, template, context)
 
 def deleteFood(request):
-	print "masuk deletefood"
 	if request.method == 'POST' :
-		print request.POST.get("delete")
 		food_list2 = Food.objects.filter(id=request.POST.get("delete"))
-		print food_list2
 		food_list2.delete()
-	return HttpResponseRedirect('/add/food/')
+	return HttpResponseRedirect('/manage/food/')
 
 def updateFood(request):
-	if request.method == 'POST' :
-		print request.POST.get("edit")
-		food_list2 = Food.objects.filter(id=request.POST.get("edit"))
-		print food_list2
-		food_list2.update(nama=request.POST.get("nama"))
-	return HttpResponseRedirect('/view/food/')	
-	
-#
-def user(request):
-	user_list = User.objects.all()
-	t = loader.get_template('user-interfaces/p_akun.html')
-	a = Context({'user_list': user_list,})
-	return HttpResponse(t.render(a))
-#
-
-def index2(request):
-	context = {}
-	template = "index.html"
+	food_list = Food.objects.filter(id=request.POST.get("edit"))
+	food = Food.objects.get(id=request.POST.get("edit"))
+	print food
+	restoran_list = Restaurant.objects.all()
+	restoran = Restaurant.objects.get(id = food.restoran.id)
+	context = {"food_list":food_list,"restoran_list":restoran_list, "restoran":restoran}
+	template = "user-interfaces/updatemakanan.html"
 	return render(request, template, context)
-	
-def jadwal_kelas(request):
-	jadwal_list = Jadwal_kelas.objects.all()
-	#return HttpResponse(jadwal_list)
-	t = loader.get_template('user-interfaces/j_dosen.html')
-	c = Context({'jadwal_list': jadwal_list,})
-	return HttpResponse(t.render(c))
 
-def addJadwal(request):
-	form = Jadwal_kelasForm(request.POST or None)
-	if form.is_valid():
-		save_it =  form.save(commit=False)
-		save_it.save()
-	return render_to_response("addjadwal.html", locals(), context_instance=RequestContext(request))
+def updateFoodSave(request):
+	if request.method == "POST":
+		restoran_list = Restaurant.objects.all()
+		food_list = Food.objects.all()
+		food_list = food_list.order_by('restoran')
+		restoran = Restaurant.objects.get(id=request.POST.get("restoran"))
+		food3 = Food.objects.filter(restoran=restoran, nama_makanan=request.POST.get("nama_makanan"))
+		print food3
+		if len(food3)>0:
+			notifikasi = "Nama dan restoran sudah tersedia"
+			context = {"food_list":food_list, 'notifikasi':notifikasi, "restoran_list":restoran_list}
+			template = "user-interfaces/m_makanan_m.html"				
+			return render(request, template, context)
+		elif len(food3)==0:
+			notifikasi = "Perubahan telah disimpan"
+			food2 = Food.objects.filter(id=request.POST.get("simpan"))
+			food2.update(restoran=restoran, nama_makanan=request.POST.get("nama_makanan"))
+			context = {"food_list":food_list, 'notifikasi':notifikasi, "restoran_list":restoran_list}
+			template = "user-interfaces/m_makanan_m.html"				
+			return render(request, template, context)
 
-def addUser(request):
-	form = UserForm(request.POST or None)
-	if form.is_valid():
-		save_it =  form.save(commit=False)
-		save_it.save()
-	return render_to_response("addUser.html", locals(), context_instance=RequestContext(request))
+def review_food(request):
+	user = User.objects.get(username='melisa')
+	makanan_id = request.POST.get("review")
+	makanan = Food.objects.get(id=makanan_id)
+	review_list = Review.objects.filter(food=makanan, dosen=user)
+	if len(review_list)>0:
+		review_food = Review.objects.get(food=makanan, dosen=user)
+		context = {"review_food":review_food}
+		template = "user-interfaces/see-review.html"				
+		return render(request, template, context)
+	else:
+		makanan_id = request.POST.get("review")
+		makanan = Food.objects.get(id=makanan_id)
+		review_all = Review.objects.all()
+		context = {"review_all":review_all,"makanan_id":makanan_id,"makanan":makanan}
+		template = "user-interfaces/review-food.html"				
+		return render(request, template, context)
+
+def save_review(request):
+	user = User.objects.get(username='melisa')
+	rate = request.POST.get("rating")
+	komen = request.POST.get("komentar")
+	makanan = Food.objects.get(id=request.POST.get("simpan"))
+	if request.method == "POST":
+		if len(Review.objects.filter(food=makanan, dosen=user))>0:
+			return HttpResponseRedirect('/historyorder/')
+		else:
+			r = Review(food=makanan, rating=rate, komentar=komen, dosen=user)
+			r.save()
+			orderItem_list = OrderItem.objects.all()
+			user2 = User.objects.get(username='wahyu.asri')
+			daftar_pesanan = []
+			for g in orderItem_list:
+				if g.order.dosen == user2:
+					baris_pesanan  = []
+					baris_pesanan.append(g.order.waktu_order)
+					baris_pesanan.append(g.food)
+					baris_pesanan.append(g.kuantitas)
+					baris_pesanan.append(g.permintaan_lain)
+					baris_pesanan.append(g.tipe_konsumen)
+					daftar_pesanan.append(baris_pesanan)
+			context = {"orderitem_list":daftar_pesanan, "notifikasi":notifikasi}
+			template = "user-interfaces/r_pemesanan.html"
+			return render(request, template, context)
+
+def recommended_food(request):
+	food_list = Food.objects.all()
+	for m in food_list:
+		makanan_id = m.id
+		review_selected = Review.objects.filter(food=m)
+		total = 0
+		for x in review_selected:
+			rating = x.rating
+			total = total + rating
+		if len(review_selected)!=0:
+			avg_rating = total/(len(review_selected)+0.00)
+		else:
+			avg_rating = total/1
+		food = Food.objects.filter(id=makanan_id)
+		food.update(total_rating=avg_rating)
+	sorted_food = Food.objects.all().order_by('-total_rating')
+	print sorted_food
+	foods = []
+	for i in sorted_food:
+		foods.append(i)
+	recommended_food = []
+	if len(foods) >=5:
+		for x in xrange(0,5):
+			recommended_food.append(foods[x]) #index out of range
+		context = {"recommended_food":recommended_food}
+		template = "user-interfaces/addorder.html"
+		return render(request, template, context)
+	else:
+		for a in foods:
+			recommended_food.append(foods[x])
+		context = {"recommended_food":recommended_food}
+		template = "user-interfaces/addorder.html"
+		return render(request, template, context)
 
 
-def order(request):
-	orderitem_list = Order_item.objects.all() 
-	u = loader.get_template('user-interfaces/p_makanan.html')
-	b = Context({'orderitem_list': orderitem_list,})
-	return HttpResponse(u.render(b))
-
-def addOrder(request):
-	form = OrderForm(request.POST or None)
-	if form.is_valid():
-		save_it =  form.save(commit=False)
-		save_it.save()
-	return render_to_response("user-interfaces/addorder.html", locals(), context_instance=RequestContext(request))	
-		
-#UPDATE
-#To start, add a URL for form display to urls.py:
-#(r'^links/edit/(?P<id>\d+)','test_project.polls.views.edit)
-# #Then, to display an HTML edit form in polls/views.py add the following block of code
-# def editFood(request,id):
-# 	u = Food.objects.get(id=id)
-# 	return render_to_response('polls/DaftarMakanan.html',
-# 		{'action':'update/' + id,
-# 		'button': 'update'})
-
-# #to deal with submitted updates, we add another URL to urls.py:
-# #(r'^links/edit/(?P<id>\d+)','test_project.polls.views.update)
-# # Finally, we add logic to polls/views.py to add the submitted data then return the list view, passing a message:
-# def updateFood(request,id):
-# 	u = Food.objects.get(id=id)
-# 	u.nama = request.POST["nama"]
-# 	u.save()
-# 	return list(request, message="Makanan berhasil diubah")
-
-#To support deletion, add a new URL pattern to urls.py:
-# #(r'^links/edit/(?P<id>\d+)','test_project.polls.views.delete)
-# #Then, to display an HTML edit form in polls/views.py, add the following block of code:
-# def deleteFood(request, id):
-#	if 'delete' in self.data:
-	# 	Food.objects.get(id=id).delete()
-	# 	return list(request, message="Makanan berhasil dihapus")
+def historyOrder(request):
+	# orderitem_list = OrderItem.objects.all()
+	# context = {"orderitem_list":orderitem_list}
+	# template = "user-interfaces/r_pemesanan.html"
+	# return render(request, template, context)
+	orderItem_list = OrderItem.objects.all()
+	user2 = User.objects.get(username='wahyu.asri')
+	daftar_pesanan = []
+	for g in orderItem_list:
+		if g.order.dosen == user2:
+			baris_pesanan  = []
+			baris_pesanan.append(g.order.waktu_order)
+			baris_pesanan.append(g.food)
+			baris_pesanan.append(g.kuantitas)
+			baris_pesanan.append(g.permintaan_lain)
+			baris_pesanan.append(g.tipe_konsumen)
+			daftar_pesanan.append(baris_pesanan)
+	context = {"orderitem_list":daftar_pesanan}
+	template = "user-interfaces/r_pemesanan.html"
+	return render(request, template, context)
